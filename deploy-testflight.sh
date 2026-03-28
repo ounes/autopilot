@@ -1,33 +1,65 @@
 #!/bin/bash
-# deploy-testflight.sh - Script de déploiement automatique sur TestFlight
+# Script de déploiement TestFlight automatisé
+# Usage: ./deploy-testflight.sh [patch|minor|major]
 
-set -e  # Arrêter en cas d'erreur
+set -e
 
-echo "🚀 Déploiement AutoPilot sur TestFlight"
-echo "========================================"
+VERSION_TYPE="${1:-patch}"  # patch par défaut (1.0.0 → 1.0.1)
+PROJECT_DIR="$HOME/.openclaw/workspace/immat-scanner-plus"
 
-# Vérifier les variables d'environnement
-if [ -z "$FASTLANE_USER" ]; then
-  echo "⚠️  FASTLANE_USER non défini. Utilise ounes.chadli@gmail.com par défaut"
-  export FASTLANE_USER="ounes.chadli@gmail.com"
-fi
+cd "$PROJECT_DIR"
 
-# Vérifier que Git est propre
-if [ -n "$(git status --porcelain)" ]; then
-  echo "⚠️  Git contient des modifications non commitées"
-  read -p "Continuer quand même ? (y/n) " -n 1 -r
-  echo
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+echo "🚀 Déploiement TestFlight - AutoPilot (ScanPilot)"
+echo "=================================================="
+echo ""
+
+# Vérifier que le repo est propre
+if [[ -n $(git status --porcelain) ]]; then
+  echo "⚠️  Changements non committés détectés."
+  echo "   Voulez-vous les committer avant de déployer ? (y/n)"
+  read -r response
+  if [[ "$response" == "y" ]]; then
+    git add .
+    echo "   Message du commit :"
+    read -r commit_msg
+    git commit -m "$commit_msg"
+  else
+    echo "❌ Déploiement annulé. Committez vos changements manuellement."
     exit 1
   fi
 fi
 
-# Lancer le déploiement Fastlane
-echo "📦 Build et upload vers TestFlight..."
-cd "$(dirname "$0")"
-bundle exec fastlane ios beta
+echo "📦 Incrémentation de la version ($VERSION_TYPE)..."
+npm version "$VERSION_TYPE" --no-git-tag-version
+
+NEW_VERSION=$(node -p "require('./package.json').version")
+echo "   Nouvelle version : $NEW_VERSION"
+
+# Commit + tag
+git add package.json app.json
+git commit -m "chore: bump version to $NEW_VERSION"
+git tag "v$NEW_VERSION"
 
 echo ""
-echo "✅ Déploiement terminé !"
-echo "📱 L'app sera disponible sur TestFlight dans ~10-15 minutes"
-echo "🔗 App Store Connect: https://appstoreconnect.apple.com"
+echo "🚀 Push vers GitHub (déclenche le build automatique)..."
+git push origin main --follow-tags
+
+echo ""
+echo "⏳ Build en cours sur GitHub Actions..."
+echo "🔗 Suivi en temps réel : https://github.com/ounes/autopilot/actions"
+
+# Attendre que le run démarre (max 10 secondes)
+sleep 3
+
+RUN_URL=$(gh run list --repo ounes/autopilot --limit 1 --json url --jq '.[0].url')
+
+echo ""
+echo "✅ Déploiement lancé !"
+echo "🔗 URL du build : $RUN_URL"
+echo ""
+echo "📱 L'app sera disponible sur TestFlight dans ~12-15 minutes."
+echo ""
+echo "💡 Commandes utiles :"
+echo "   - Suivre les logs : gh run watch --repo ounes/autopilot"
+echo "   - Vérifier le statut : gh run list --repo ounes/autopilot --limit 1"
+echo ""
