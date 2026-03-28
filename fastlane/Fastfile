@@ -93,15 +93,11 @@ platform :ios do
   # Lane 3b: Upload with API Key (no email/password needed)
   desc "Upload to TestFlight using API Key"
   lane :upload_with_api_key do
-    # Decode base64 key content
-    require 'base64'
-    key_content = Base64.decode64(ENV['APP_STORE_CONNECT_API_KEY_CONTENT'])
-    
     api_key = app_store_connect_api_key(
       key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
-      key_content: key_content,
-      is_key_content_base64: false,  # Already decoded above
+      key_content: ENV['APP_STORE_CONNECT_API_KEY_CONTENT'],  # Base64-encoded .p8
+      is_key_content_base64: true,  # CRITICAL: Tell Fastlane it's base64
       duration: 500  # CRITICAL: max 500 to avoid clock skew issues (20min limit)
     )
     
@@ -111,6 +107,40 @@ platform :ios do
       skip_waiting_for_build_processing: true
     )
     puts "☁️ Upload terminé via API Key !"
+  end
+  
+  # Lane 3c: Test API Key auth (no upload)
+  desc "Test App Store Connect API Key authentication"
+  lane :test_api_key do
+    require 'base64'
+    key_content = Base64.decode64(ENV['APP_STORE_CONNECT_API_KEY_CONTENT'])
+    
+    puts "🔑 Testing API Key authentication..."
+    puts "Key ID: #{ENV['APP_STORE_CONNECT_API_KEY_ID']}"
+    puts "Issuer ID: #{ENV['APP_STORE_CONNECT_ISSUER_ID']}"
+    
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+      key_content: key_content,
+      is_key_content_base64: false,
+      duration: 500
+    )
+    
+    puts "✅ API Key object created! Type: #{api_key.class}"
+    puts "Calling pilot with api_key parameter..."
+    
+    begin
+      # Use pilot action which will handle the API Key correctly
+      apps = Spaceship::ConnectAPI.get_apps(filter: {}, api_key: api_key)
+      puts "✅ ✅ ✅ AUTH SUCCESS VIA PILOT! ✅ ✅ ✅"
+      puts "Apps found: #{apps.length}"
+    rescue => e
+      puts "❌ ❌ ❌ AUTH FAILED! ❌ ❌ ❌"
+      puts "Error class: #{e.class.name}"
+      puts "Error message: #{e.message}"
+      raise e
+    end
   end
   
   # Lane 4: Screenshots automatiques pour App Store (optionnel)
