@@ -1,165 +1,217 @@
-# Immat Scanner Plus 🚗
+# 🚗 AutoPilot
 
-Application mobile React Native (Expo) pour scanner des plaques d'immatriculation et obtenir des estimations de prix à partir de Leboncoin.
+**Évaluez le prix de votre voiture rapidement via scan de plaque d'immatriculation**
 
-## 🎯 Fonctionnalités
+<div align="center">
 
-### ✅ Implémenté
-- 📸 Scanner de plaque (UI prête, OCR à intégrer)
-- ✍️ Saisie manuelle de plaque
-- 📝 Saisie manuelle des infos véhicule (marque, modèle, année, kilométrage)
-- 🔍 Recherche de cote Leboncoin avec :
-  - Fourchette de prix (5e-95e percentile)
-  - Prix médian
-  - Nombre de véhicules similaires (région + France)
-  - Répartition par région
-  - Top 10 annonces les plus pertinentes
-- 📊 Critères de recherche intelligents :
-  - Année: ±2 ans
-  - Kilométrage: ±20 000 km
-- 📜 Historique des recherches
-- 👤 Profil utilisateur (stats, garage, favoris)
-- 🎨 Interface fidèle à Immat Scanner (design bleu/blanc, plaques françaises)
+[![React Native](https://img.shields.io/badge/React%20Native-0.76-61DAFB?logo=react)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-52-000020?logo=expo)](https://expo.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-25-339933?logo=node.js)](https://nodejs.org/)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-### 🔧 À intégrer (backend)
-- OCR plaque avec `fast-plate-ocr` (skill vehicle-valuation)
-- Identification véhicule via base ADEME + API SIV-Auto
-- Scraping Leboncoin réel (actuellement simulé)
-
-## 📦 Installation
-
-```bash
-cd ~/.openclaw/workspace/immat-scanner-plus
-npm install
-```
-
-## 🚀 Lancement
-
-### Web (développement rapide)
-```bash
-npm run web
-```
-
-### iOS (simulateur)
-```bash
-npm run ios
-```
-
-### Android (émulateur ou appareil)
-```bash
-npm run android
-```
-
-## 🏗️ Architecture
-
-```
-immat-scanner-plus/
-├── App.js                      # Navigation principale
-├── screens/
-│   ├── HomeScreen.js          # Accueil (scan/saisie plaque)
-│   ├── ResultsScreen.js       # Résultats (cote + annonces)
-│   ├── HistoryScreen.js       # Historique recherches
-│   └── ProfileScreen.js       # Profil utilisateur
-├── services/
-│   └── api.js                 # Logique API (simulation pour l'instant)
-└── components/                # Composants réutilisables (à créer)
-```
-
-## 🔌 Intégration backend (prochaine étape)
-
-### Option 1 : Backend Node.js local
-
-Créer un serveur Express qui :
-1. Reçoit photo ou plaque depuis l'app mobile
-2. Appelle `fast-plate-ocr` (si photo)
-3. Identifie le véhicule (base ADEME + SIV-Auto fallback)
-4. Exécute le script `vehicle-valuation` pour scraper Leboncoin
-5. Retourne JSON avec véhicule + cote
-
-**Stack recommandée :**
-- Express.js
-- Python scripts (OCR + scraping)
-- PostgreSQL (cache)
-- Redis (rate limiting)
-
-### Option 2 : Appels directs depuis l'app
-
-Remplacer le contenu de `services/api.js` pour :
-1. Appeler directement SIV-Auto API (freemium 100 req/mois)
-2. Scraper Leboncoin via Firecrawl (skill disponible)
-
-## 📱 Utilisation
-
-### Recherche par plaque
-1. Saisir la plaque dans le champ (ex: `FA-235-LB`)
-2. Cliquer sur "Rechercher"
-3. Voir les résultats (fiche véhicule + cote)
-
-### Recherche manuelle
-1. Cliquer sur "Ou saisir les infos manuellement"
-2. Remplir marque, modèle, année (+ kilométrage optionnel)
-3. Cliquer sur "Rechercher"
-
-### Historique
-- Toutes les recherches sont sauvegardées automatiquement
-- Accessible via l'onglet "Historique"
-- Possibilité de supprimer individuellement ou tout effacer
-
-## 🎨 Design
-
-Interface inspirée d'Immat Scanner :
-- **Couleurs** : Bleu (#2563EB) + blanc + gris sombre
-- **Plaque** : Format français avec bandes bleues EU
-- **Cards** : Arrondis 16px, shadows légères
-- **Navigation** : Bottom tabs (Accueil, Historique, Profil)
-
-## 📊 Données simulées (pour test)
-
-Actuellement, l'app utilise des données mock pour :
-- Identification véhicule (Peugeot 308 par défaut)
-- Annonces Leboncoin (50 listings générés)
-- Statistiques régionales
-
-Pour passer en production, remplacer par de vrais appels API dans `services/api.js`.
-
-## 🔐 Sécurité
-
-- Historique stocké localement (AsyncStorage)
-- Pas de données sensibles transmises
-- Rate limiting à implémenter côté backend
-
-## 📈 Prochaines étapes
-
-1. ✅ Créer le backend Express.js
-2. ✅ Intégrer fast-plate-ocr (OCR photo → plaque)
-3. ✅ Connecter à SIV-Auto API (identification véhicule)
-4. ✅ Intégrer skill vehicle-valuation (scraping Leboncoin)
-5. ✅ Implémenter système de crédits/abonnement
-6. ✅ Ajouter alertes prix (push notifications)
-7. ✅ Publier sur App Store / Play Store
-
-## 🛠️ Stack technique
-
-- **Frontend** : React Native (Expo)
-- **Navigation** : React Navigation v6
-- **UI** : React Native Paper + custom components
-- **State** : React Hooks
-- **Storage** : AsyncStorage
-- **Backend** : À créer (Node.js + Python recommandé)
-
-## 📝 Notes
-
-- L'OCR via caméra nécessite des permissions (demandées automatiquement)
-- Le scraping Leboncoin doit respecter les rate limits (max 2-3x/jour)
-- SIV-Auto freemium = 100 requêtes/mois gratuit
-
-## 🤝 Contribution
-
-Pour ajouter des fonctionnalités :
-1. Créer une nouvelle screen dans `screens/`
-2. Ajouter la route dans `App.js`
-3. Mettre à jour `services/api.js` si besoin d'appels backend
+</div>
 
 ---
 
-**Développé pour Ounes** - Garage automobile Peyrolles-en-Provence 🚗
+## 📱 Fonctionnalités
+
+- 🔍 **Scan de plaque** : Reconnaissance automatique via OCR (à venir)
+- ⌨️ **Saisie manuelle** : Recherche par plaque d'immatriculation française
+- 🚙 **Recherche détaillée** : Marque, modèle, année, kilométrage, carburant, boîte
+- 💰 **Fourchette de prix** : Moyenne basse, médiane, moyenne haute (données Leboncoin)
+- 💼 **Estimation reprise pro** : Calcul automatique avec lien vers vendezvotrevoiture.fr
+- 📊 **Top 10 annonces** : Comparaison avec annonces similaires
+- 📍 **Filtrage par région** : Recherche nationale ou locale (13 régions)
+- 🔗 **Lien Leboncoin** : Redirection vers annonces filtrées
+- 📜 **Historique** : Sauvegarde des recherches récentes
+
+---
+
+## 🏗️ Architecture
+
+### **Frontend**
+- **React Native** + **Expo** (SDK 52)
+- **React Navigation** (tab + stack)
+- **Axios** (requêtes HTTP)
+- **AsyncStorage** (persistance locale)
+
+### **Backend**
+- **Node.js** (Express server)
+- **Python 3.13** (scraping Leboncoin)
+- **lbc** library (unofficial Leboncoin API)
+
+### **Services externes**
+- **Leboncoin** : scraping des annonces VO
+- **vendezvotrevoiture.fr** : estimation reprise professionnelle (affiliation Awin)
+
+---
+
+## 🚀 Installation
+
+### **Prérequis**
+- Node.js ≥ 25
+- Python ≥ 3.13
+- Expo Go (app mobile)
+
+### **1. Cloner le repo**
+```bash
+git clone https://github.com/ounes/autopilot.git
+cd autopilot
+```
+
+### **2. Installer les dépendances**
+
+#### **Frontend**
+```bash
+npm install
+```
+
+#### **Backend**
+```bash
+cd backend
+npm install
+
+# Créer venv Python et installer dépendances
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### **3. Configuration**
+
+Éditer `services/api.js` avec l'IP de votre machine :
+```javascript
+const API_BASE = 'http://VOTRE_IP:3001/api';  // Ex: http://192.168.1.13:3001/api
+```
+
+### **4. Lancer le backend**
+```bash
+cd backend
+node server.js
+```
+
+Le serveur démarre sur `http://localhost:3001`
+
+### **5. Lancer l'app**
+```bash
+npx expo start
+```
+
+Scanner le QR code avec **Expo Go** (iOS/Android)
+
+---
+
+## 📸 Screenshots
+
+_(À venir)_
+
+---
+
+## 🗺️ Roadmap
+
+### **✅ Version 1.0 (actuelle)**
+- Recherche par plaque (API SIV)
+- Recherche manuelle complète
+- Scraping Leboncoin en temps réel
+- Fourchette de prix (percentiles 5-50-95)
+- Filtrage IQR des outliers
+- Estimation reprise pro
+- Historique local
+- Paramètres (région, marges année/km)
+
+### **🚧 Version 1.1 (en cours)**
+- OCR plaque (scan photo)
+- Amélioration UI/UX
+- Mode hors ligne
+- Partage de résultats
+
+### **🔮 Version 2.0 (prévu)**
+- Favoris
+- Comparaison multi-véhicules
+- Historique de prix (évolution)
+- Alertes baisse de prix
+- Export PDF
+
+---
+
+## 🛠️ Stack technique
+
+| Composant | Technologie | Version |
+|-----------|------------|---------|
+| Runtime mobile | React Native | 0.76.6 |
+| Framework | Expo | 52.0.11 |
+| UI Components | Custom | - |
+| Navigation | React Navigation | 7 |
+| HTTP Client | Axios | 1.7.9 |
+| Backend | Express | 4.21.2 |
+| Scraping | Python lbc | latest |
+| Storage | AsyncStorage | 2.1.0 |
+
+---
+
+## 📊 Données
+
+### **Source : Leboncoin**
+- Recherche en temps réel via scraping Python
+- Filtres : marque, modèle, année (±2 ans), kilométrage (±30k km), région
+- Limitation : 50 annonces par recherche
+- Traitement : filtrage IQR, calcul percentiles
+
+### **API SIV (plaques)**
+- Reconnaissance plaque française (format AA-123-BB)
+- Récupération : marque, modèle, année, motorisation, puissance
+- Limitation : API non officielle (peut changer)
+
+---
+
+## ⚙️ Configuration
+
+### **Paramètres de recherche**
+- **Région** : 13 régions + France entière
+- **Marge année** : ±2 ans (par défaut)
+- **Marge kilométrage** : ±30 000 km (par défaut)
+
+Modifiable dans **Profil → Paramètres**
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! Merci de :
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit les changements (`git commit -m 'feat: Add AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+---
+
+## 📄 License
+
+Ce projet est sous licence **MIT**. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## 🙏 Remerciements
+
+- [Leboncoin](https://www.leboncoin.fr) pour les données de marché
+- [vendezvotrevoiture.fr](https://www.vendezvotrevoiture.fr) pour l'estimation reprise
+- [Expo](https://expo.dev) pour le framework mobile
+- Communauté React Native
+
+---
+
+## 📧 Contact
+
+**Ounes Chadli**
+- GitHub: [@ounes](https://github.com/ounes)
+- Email: ounes@example.com
+
+---
+
+<div align="center">
+
+**⭐ Si ce projet vous plaît, n'hésitez pas à lui donner une étoile !**
+
+</div>
