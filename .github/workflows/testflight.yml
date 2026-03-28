@@ -53,6 +53,10 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           
+          # Verify certificate was imported
+          echo "=== Certificates in keychain ==="
+          security find-identity -v -p codesigning -k $KEYCHAIN_PATH
+          
           # Install provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           echo "$PROVISIONING_PROFILE_BASE64" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/8e6a9f4b-a003-42b8-9255-c5ecc6d1f8ef.mobileprovision
@@ -69,7 +73,6 @@ jobs:
             -archivePath $PWD/build/AutoPilot.xcarchive \
             clean archive \
             CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="iPhone Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="8e6a9f4b-a003-42b8-9255-c5ecc6d1f8ef" \
             DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
       
