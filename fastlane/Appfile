@@ -1,7 +1,7 @@
 # Appfile - Configuration Apple Developer
 
 app_identifier("com.ouneschadli.autopilot") # Bundle identifier
-apple_id("ounes.chadli@gmail.com") # Apple Developer email
+apple_id("ounes.chadli@laposte.net") # Apple Developer email (Titulaire App Store Connect)
 
 # Team ID (à récupérer sur developer.apple.com)
 # itc_team_id("XXXXXXXXXX") # App Store Connect Team ID
