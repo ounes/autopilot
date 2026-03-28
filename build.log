@@ -1,0 +1,8 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -workspace ios/AutoPilot.xcworkspace -scheme AutoPilot -sdk iphoneos -configuration Release archive -archivePath build/AutoPilot.xcarchive
+
+Build settings from command line:
+    SDKROOT = iphoneos26.4
+
+2026-03-28 11:32:18.904 xcodebuild[41594:2462609] Writing error result bundle to /var/folders/px/zkmz96y170nbqx45pj4jt1w00000gn/T/ResultBundle_2026-28-03_11-32-0018.xcresult
+xcodebuild: error: Found no destinations for the scheme 'AutoPilot' and action archive.
