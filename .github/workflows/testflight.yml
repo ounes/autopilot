@@ -57,6 +57,15 @@ jobs:
           echo "=== Certificates in keychain ==="
           security find-identity -v -p codesigning $KEYCHAIN_PATH
           
+          # Delete any Apple Development certificates to avoid conflicts
+          echo "=== Removing Apple Development certificates if present ==="
+          security find-identity -v -p codesigning $KEYCHAIN_PATH | grep "Apple Development" | awk '{print $2}' | while read hash; do
+            security delete-certificate -Z "$hash" $KEYCHAIN_PATH 2>/dev/null || true
+          done
+          
+          echo "=== Final certificates in keychain ==="
+          security find-identity -v -p codesigning $KEYCHAIN_PATH
+          
           # Install provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           echo "$PROVISIONING_PROFILE_BASE64" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/8e6a9f4b-a003-42b8-9255-c5ecc6d1f8ef.mobileprovision
