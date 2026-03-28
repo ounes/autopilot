@@ -95,12 +95,13 @@ jobs:
       
       - name: Upload to TestFlight
         env:
-          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
           bundle exec fastlane run upload_to_testflight \
             ipa:"$PWD/build/AutoPilot.ipa" \
+            api_key_path:none \
             skip_waiting_for_build_processing:true
       
       - name: Cleanup keychain and provisioning profile
