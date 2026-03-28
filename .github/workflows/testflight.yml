@@ -94,27 +94,19 @@ jobs:
             -exportPath $PWD/build
       
       - name: Upload to TestFlight
-        env:
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
-          # Create API Key JSON file
-          cat > /tmp/api_key.json << EOF
-          {
-            "key_id": "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}",
-            "issuer_id": "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}",
-            "key": "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}"
-          }
-          EOF
+          # Create API Key .p8 file
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" > /tmp/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
           
           bundle exec fastlane run upload_to_testflight \
             ipa:"$PWD/build/AutoPilot.ipa" \
-            api_key_path:"/tmp/api_key.json" \
+            api_key_path:"/tmp/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8" \
+            api_key_issuer_id:"${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" \
+            api_key_key_id:"${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
             skip_waiting_for_build_processing:true
           
           # Cleanup API Key file
-          rm /tmp/api_key.json
+          rm /tmp/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
       
       - name: Cleanup keychain and provisioning profile
         if: always()
