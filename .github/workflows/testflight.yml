@@ -94,15 +94,18 @@ jobs:
             -exportPath $PWD/build
       
       - name: Upload to TestFlight
-        env:
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-          APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false
         run: |
+          # Create API Key .p8 file
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" > /tmp/AuthKey.p8
+          
+          # Use Fastlane with explicit API Key (bypasses email/password auth)
           bundle exec fastlane run upload_to_testflight \
             ipa:"$PWD/build/AutoPilot.ipa" \
+            api_key:"{\"key_id\":\"${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}\",\"issuer_id\":\"${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}\",\"key_filepath\":\"/tmp/AuthKey.p8\"}" \
             skip_waiting_for_build_processing:true
+          
+          # Cleanup
+          rm /tmp/AuthKey.p8
       
       - name: Cleanup keychain and provisioning profile
         if: always()
