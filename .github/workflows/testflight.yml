@@ -94,36 +94,19 @@ jobs:
             -exportPath $PWD/build
       
       - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_PATH: /tmp/AuthKey.p8
         run: |
           # Create API Key .p8 file
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" > /tmp/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" > /tmp/AuthKey.p8
           
-          # Create Fastlane script with API Key
-          cat > /tmp/upload.rb << 'RUBY'
-require 'spaceship'
-
-api_key = Spaceship::ConnectAPI::APIClient.token(
-  key_id: ENV['KEY_ID'],
-  issuer_id: ENV['ISSUER_ID'],
-  filepath: ENV['KEY_PATH']
-)
-
-Fastlane::Actions::UploadToTestflightAction.run({
-  ipa: ENV['IPA_PATH'],
-  api_key: api_key,
-  skip_waiting_for_build_processing: true
-})
-RUBY
-          
-          # Run upload with API Key
-          KEY_ID="${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
-          ISSUER_ID="${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}" \
-          KEY_PATH="/tmp/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8" \
-          IPA_PATH="$PWD/build/AutoPilot.ipa" \
-          bundle exec ruby /tmp/upload.rb
+          # Upload using Fastlane lane with API Key
+          bundle exec fastlane upload_with_api_key
           
           # Cleanup
-          rm /tmp/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8 /tmp/upload.rb
+          rm /tmp/AuthKey.p8
       
       - name: Cleanup keychain and provisioning profile
         if: always()
