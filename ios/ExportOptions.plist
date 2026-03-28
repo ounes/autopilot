@@ -6,13 +6,18 @@
     <string>app-store</string>
     <key>teamID</key>
     <string>2T2SB8U85C</string>
+    <key>signingStyle</key>
+    <string>manual</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.ouneschadli.autopilot</key>
+        <string>8e6a9f4b-a003-42b8-9255-c5ecc6d1f8ef</string>
+    </dict>
     <key>uploadBitcode</key>
     <false/>
     <key>uploadSymbols</key>
     <true/>
     <key>compileBitcode</key>
     <false/>
-    <key>signingStyle</key>
-    <string>automatic</string>
 </dict>
 </plist>
