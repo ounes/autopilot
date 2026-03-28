@@ -12,7 +12,13 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ouneschadli.autopilot",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AutoPilot a besoin de la caméra pour scanner les plaques d'immatriculation.",
+        "NSPhotoLibraryUsageDescription": "AutoPilot a besoin d'accéder à vos photos pour analyser les plaques."
+      }
     },
     "android": {
       "adaptiveIcon": {

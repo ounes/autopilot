@@ -1,0 +1,11 @@
+# Appfile - Configuration Apple Developer
+
+app_identifier("com.ouneschadli.autopilot") # Bundle identifier
+apple_id("ounes.chadli@gmail.com") # Apple Developer email
+
+# Team ID (à récupérer sur developer.apple.com)
+# itc_team_id("XXXXXXXXXX") # App Store Connect Team ID
+# team_id("YYYYYYYYYY") # Developer Portal Team ID
+
+# Pour activer 2FA avec Fastlane Match (gestion des certificats)
+# ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"] = "xxxx-xxxx-xxxx-xxxx"

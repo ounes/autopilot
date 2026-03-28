@@ -1,0 +1,128 @@
+# Fastfile - Automation for iOS builds and TestFlight deployment
+
+default_platform(:ios)
+
+platform :ios do
+  
+  # Variables
+  APP_IDENTIFIER = "com.ouneschadli.autopilot"
+  WORKSPACE = "ios/AutoPilot.xcworkspace"
+  SCHEME = "AutoPilot"
+  
+  before_all do
+    ensure_git_status_clean
+  end
+
+  # Lane 1: Build and deploy to TestFlight (one command)
+  desc "Build and deploy a new version to TestFlight"
+  lane :beta do
+    # 1. Incrémenter le build number automatiquement
+    increment_build_number(xcodeproj: "ios/AutoPilot.xcodeproj")
+    
+    # 2. Installer les dépendances CocoaPods
+    cocoapods(podfile: "ios/Podfile")
+    
+    # 3. Build l'app (archive)
+    gym(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build",
+      output_name: "AutoPilot.ipa"
+    )
+    
+    # 4. Upload vers TestFlight
+    pilot(
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      changelog: "Nouvelle version automatique via Fastlane"
+    )
+    
+    # 5. Commit et tag la version
+    commit_version_bump(
+      message: "Version bump by Fastlane",
+      xcodeproj: "ios/AutoPilot.xcodeproj"
+    )
+    
+    add_git_tag(
+      tag: "v#{get_version_number(xcodeproj: 'ios/AutoPilot.xcodeproj')}-#{get_build_number(xcodeproj: 'ios/AutoPilot.xcodeproj')}"
+    )
+    
+    push_to_git_remote
+    
+    # Notification de succès
+    slack(
+      message: "✅ AutoPilot déployé sur TestFlight !",
+      success: true
+    ) if ENV['SLACK_URL']
+    
+    puts "🎉 Build uploadé sur TestFlight avec succès !"
+  end
+  
+  # Lane 2: Build only (sans upload)
+  desc "Build iOS app (archive only)"
+  lane :build do
+    increment_build_number(xcodeproj: "ios/AutoPilot.xcodeproj")
+    cocoapods(podfile: "ios/Podfile")
+    gym(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build",
+      output_name: "AutoPilot.ipa"
+    )
+    puts "📦 Build créé dans ./build/AutoPilot.ipa"
+  end
+  
+  # Lane 3: Upload only (si build déjà fait)
+  desc "Upload existing IPA to TestFlight"
+  lane :upload do
+    pilot(
+      skip_waiting_for_build_processing: true,
+      ipa: "./build/AutoPilot.ipa",
+      skip_submission: true,
+      distribute_external: false
+    )
+    puts "☁️ Upload terminé !"
+  end
+  
+  # Lane 4: Screenshots automatiques pour App Store (optionnel)
+  desc "Generate screenshots"
+  lane :screenshots do
+    capture_screenshots(scheme: SCHEME)
+    upload_to_app_store(
+      skip_binary_upload: true,
+      skip_metadata: true
+    )
+  end
+  
+  # Lane 5: Release complète (TestFlight → App Store)
+  desc "Deploy to App Store"
+  lane :release do
+    beta
+    deliver(
+      submit_for_review: true,
+      automatic_release: false,
+      force: true,
+      skip_screenshots: true,
+      skip_metadata: false,
+      submission_information: {
+        add_id_info_uses_idfa: false
+      }
+    )
+    puts "🚀 App soumise à review Apple !"
+  end
+  
+  # Gestion des erreurs
+  error do |lane, exception|
+    slack(
+      message: "❌ Erreur dans lane #{lane}: #{exception}",
+      success: false
+    ) if ENV['SLACK_URL']
+  end
+  
+end

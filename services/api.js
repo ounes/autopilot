@@ -2,8 +2,10 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSearchSettings } from '../utils/settings';
 
-// Backend réel - remplacer par l'IP du Mac si test sur mobile
-const API_BASE = 'http://192.168.1.13:3001/api';
+// Backend réel - utilise le tunnel ngrok pour accès 5G
+// WiFi local : http://192.168.1.13:3001/api
+// 5G/Internet : https://tuitional-ectally-kyla.ngrok-free.dev/api
+const API_BASE = 'https://tuitional-ectally-kyla.ngrok-free.dev/api';
 
 // Configuration axios avec timeout plus long
 const axiosInstance = axios.create({
