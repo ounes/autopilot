@@ -96,7 +96,8 @@ platform :ios do
     api_key = app_store_connect_api_key(
       key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
-      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
+      key: ENV['APP_STORE_CONNECT_API_KEY_CONTENT'],  # Pass key content directly (not filepath)
+      is_key_content_base64: false,
       duration: 500  # CRITICAL: max 500 to avoid clock skew issues (20min limit)
     )
     

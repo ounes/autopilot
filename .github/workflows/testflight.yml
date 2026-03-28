@@ -96,17 +96,11 @@ jobs:
       - name: Upload to TestFlight
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_PATH: /tmp/AuthKey.p8
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
-          # Create API Key .p8 file
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" > /tmp/AuthKey.p8
-          
-          # Upload using Fastlane lane with API Key
+          # Upload using Fastlane lane with API Key (key content passed as env var)
           bundle exec fastlane upload_with_api_key
-          
-          # Cleanup
-          rm /tmp/AuthKey.p8
       
       - name: Cleanup keychain and provisioning profile
         if: always()
