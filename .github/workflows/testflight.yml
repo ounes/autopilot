@@ -55,7 +55,7 @@ jobs:
           
           # Verify certificate was imported
           echo "=== Certificates in keychain ==="
-          security find-identity -v -p codesigning -k $KEYCHAIN_PATH
+          security find-identity -v -p codesigning $KEYCHAIN_PATH
           
           # Install provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
