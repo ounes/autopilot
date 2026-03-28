@@ -101,7 +101,7 @@ platform :ios do
       duration: 500  # CRITICAL: max 500 to avoid clock skew issues (20min limit)
     )
     
-    upload_to_testflight(
+    pilot(
       api_key: api_key,
       ipa: "./build/AutoPilot.ipa",
       skip_waiting_for_build_processing: true
