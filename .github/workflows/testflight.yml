@@ -99,10 +99,22 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
+          # Create API Key JSON file
+          cat > /tmp/api_key.json << EOF
+          {
+            "key_id": "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}",
+            "issuer_id": "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}",
+            "key": "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}"
+          }
+          EOF
+          
           bundle exec fastlane run upload_to_testflight \
             ipa:"$PWD/build/AutoPilot.ipa" \
-            api_key_path:none \
+            api_key_path:"/tmp/api_key.json" \
             skip_waiting_for_build_processing:true
+          
+          # Cleanup API Key file
+          rm /tmp/api_key.json
       
       - name: Cleanup keychain and provisioning profile
         if: always()
