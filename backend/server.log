@@ -1,0 +1,26 @@
+🚗 Backend Immat Scanner Plus
+🚀 Server running on http://localhost:3001
+
+Endpoints disponibles:
+  POST /api/search/plate   - Recherche par plaque
+  POST /api/search/manual  - Recherche manuelle
+  GET  /health             - Health check
+
+⚠️  Assurez-vous que le venv Python est créé et que la lib lbc est installée:
+  cd backend
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+Executing: /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/venv/bin/python3 /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/scripts/search_leboncoin.py "PEUGEOT" "308" 2018 --year-margin 2 --limit 50
+Executing: /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/venv/bin/python3 /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/scripts/search_leboncoin.py "PEUGEOT" "308" 2018 --year-margin 2 --limit 50
+Executing: /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/venv/bin/python3 /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/scripts/search_leboncoin.py "PEUGEOT" "308" 2018 --year-margin 2 --limit 50
+Executing: /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/venv/bin/python3 /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/scripts/search_leboncoin.py "PEUGEOT" "208" 2012 --year-margin 3 --mileage 85000 --mileage-margin 30000 --region 13 --limit 50
+Error scraping leboncoin: Error: The value of 'region' must be a list or a tuple.
+    at searchLeboncoinPython (/Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/server.js:154:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/server.js:77:27
+Error: Error: Impossible de récupérer les données Leboncoin
+    at searchLeboncoinPython (/Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/server.js:168:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/server.js:77:27
+Executing: /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/venv/bin/python3 /Users/ouneschadli/.openclaw/workspace/immat-scanner-plus/backend/scripts/search_leboncoin.py "PEUGEOT" "108" 2014 --year-margin 2 --fuel-type Essence --gearbox-type Manuelle --limit 50

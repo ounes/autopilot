@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Immat Scanner Plus — Maquette APRÈS refonte</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: rgba(30, 41, 59, 0.85);
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Overlay badge */
+    .badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #10B981;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .screen {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 20px;
+      margin-bottom: 32px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .header-icon {
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .menu-button {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    /* Subtitle */
+    .subtitle {
+      font-size: 18px;
+      color: white;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      padding: 0 16px;
+    }
+
+    /* Card */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 0 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Button */
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 56px;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .button-primary {
+      background: #3B82F6;
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: #2563EB;
+    }
+
+    .button-ghost {
+      background: transparent;
+      color: #1D4ED8;
+      min-height: 40px;
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+
+    .button-ghost:hover {
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    /* OR text */
+    .or-text {
+      text-align: center;
+      color: #64748B;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin: 20px 0;
+    }
+
+    /* Plaque */
+    .plate-container {
+      display: flex;
+      height: 64px;
+      border-radius: 12px;
+      border: 2px solid #CBD5E1;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .plate-left,
+    .plate-right {
+      width: 44px;
+      background: #2563EB;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0;
+    }
+
+    .eu-stars {
+      display: flex;
+      flex-wrap: wrap;
+      width: 28px;
+      gap: 2px;
+      margin-bottom: 4px;
+    }
+
+    .star {
+      width: 3px;
+      height: 3px;
+      background: #FCD34D;
+    }
+
+    .plate-country {
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .plate-input {
+      flex: 1;
+      border: none;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #0F172A;
+      padding: 0 8px;
+    }
+
+    .plate-input::placeholder {
+      color: #94A3B8;
+    }
+
+    /* Info box */
+    .info-box {
+      display: flex;
+      gap: 12px;
+      background: #DBEAFE;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 24px 20px;
+    }
+
+    .info-icon {
+      width: 24px;
+      height: 24px;
+      color: #2563EB;
+      flex-shrink: 0;
+    }
+
+    .info-text {
+      font-size: 14px;
+      color: #1E40AF;
+      line-height: 1.6;
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: white;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      padding-bottom: 8px;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-item.active .nav-icon {
+      color: #3B82F6;
+    }
+
+    .nav-item.active .nav-label {
+      color: #3B82F6;
+    }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      color: #64748B;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      color: #64748B;
+    }
+
+    /* Icons (simple SVG) */
+    svg {
+      fill: currentColor;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="badge">✨ APRÈS</div>
+    
+    <div class="screen">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <svg class="header-icon" viewBox="0 0 24 24">
+            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+          </svg>
+          <div class="header-title">Immat Scanner</div>
+        </div>
+        <div class="menu-button">
+          <svg class="header-icon" viewBox="0 0 24 24" style="width: 32px; height: 32px;">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Subtitle -->
+      <div class="subtitle">
+        Scannez et découvrez les caractéristiques des véhicules autour de vous
+      </div>
+
+      <!-- Card -->
+      <div class="card">
+        <!-- Scanner button -->
+        <button class="button button-primary">
+          <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+            <path d="M9.4 10.5l4.77-8.26C13.47 2.09 12.75 2 12 2c-2.4 0-4.6.85-6.32 2.25l3.66 6.35.06-.1zM21.54 9c-.92-2.92-3.15-5.26-6-6.34L11.88 9h9.66zm.26 1h-7.49l.29.5 4.76 8.25C21 16.97 22 14.61 22 12c0-.69-.07-1.35-.2-2zM8.54 12l-3.9-6.75C3.01 7.03 2 9.39 2 12c0 .69.07 1.35.2 2h7.49l-1.15-2zm-6.08 3c.92 2.92 3.15 5.26 6 6.34L12.12 15H2.46zm11.27 0l-3.9 6.76c.7.15 1.42.24 2.17.24 2.4 0 4.6-.85 6.32-2.25l-3.66-6.35-.93 1.6z"/>
+          </svg>
+          Scanner une plaque
+        </button>
+
+        <!-- OR text -->
+        <div class="or-text">OU SAISISSEZ LA PLAQUE</div>
+
+        <!-- Plaque -->
+        <div class="plate-container">
+          <div class="plate-left">
+            <div class="eu-stars">
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+              <div class="star"></div>
+            </div>
+            <div class="plate-country">F</div>
+          </div>
+          <input type="text" class="plate-input" placeholder="GX 123 AK" maxlength="9">
+          <div class="plate-right"></div>
+        </div>
+
+        <!-- Search button -->
+        <button class="button button-primary">
+          <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+          Rechercher
+        </button>
+
+        <!-- Manual link -->
+        <button class="button button-ghost">
+          Saisie manuelle
+        </button>
+      </div>
+
+      <!-- Info box -->
+      <div class="info-box">
+        <svg class="info-icon" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+        <div class="info-text">
+          Un pseudo vous a été attribué ! Personnalisez-le en quelques secondes depuis les paramètres de votre profil.
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <!-- Bottom navigation -->
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          <div class="nav-label">Accueil</div>
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+          </svg>
+          <div class="nav-label">Historique</div>
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          <div class="nav-label">Profil</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
