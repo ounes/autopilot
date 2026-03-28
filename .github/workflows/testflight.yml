@@ -96,6 +96,7 @@ jobs:
       - name: Upload to TestFlight
         env:
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
         run: |
           bundle exec fastlane run upload_to_testflight \
